@@ -24,7 +24,7 @@
     </Window.Resources>
     <Grid>
         <Image Margin="0" Source="images/snake-menu.png" Stretch="None"/>
-        <Grid x:Name="Grd_MainMenu" Width="900" Height="350" Margin="0 80 0 0">
+        <Grid x:Name="Grd_MainMenu" Width="900" Height="300" Margin="0 100 0 0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
