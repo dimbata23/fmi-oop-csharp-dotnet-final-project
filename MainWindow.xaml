@@ -1,0 +1,38 @@
+﻿<Window x:Class="fmi_oop_csharp_dotnet_final_project.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:fmi_oop_csharp_dotnet_final_project"
+        mc:Ignorable="d"
+        Title="Snake" Width="1200" Height="675" ResizeMode="NoResize" 
+        WindowStartupLocation="CenterScreen" Cursor="Cross" WindowStyle="None" 
+        AllowsTransparency="True" ForceCursor="True" Background="Transparent"
+        FontFamily="Courier New" FontSize="36" Foreground="#fff">
+    <Window.Resources>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#fff"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="FontWeight" Value="UltraBlack"/>
+                    <Setter Property="Background" Value="Transparent"/> <!-- TODO: That doesn't work for some reason???  -->
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Image Margin="0" Source="images/snake-menu.png" Stretch="None"/>
+        <Grid x:Name="Grd_MainMenu" Width="900" Height="350" Margin="0 80 0 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Button Grid.Row="0" Width="900" Height="64" Content="New Game"/>
+            <Button Grid.Row="1" Width="900" Height="64" Content="Multiplayer [not implemented]" Foreground="#222"/>
+            <Button Grid.Row="2" Width="900" Height="64" Content="Quit" Click="Btn_QuitClick"/>
+        </Grid>
+    </Grid>
+</Window>
