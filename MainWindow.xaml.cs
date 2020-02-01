@@ -29,5 +29,17 @@ namespace fmi_oop_csharp_dotnet_final_project
         {
             Environment.Exit(0);
         }
+
+        private void Btn_NewGameClick(object sender, RoutedEventArgs e)
+        {
+            Grd_MenuScreen.Visibility = Visibility.Hidden;
+            Grd_GameScreen.Visibility = Visibility.Visible;
+        }
+
+        private void Label_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                Wnd_MainWindow.DragMove();
+        }
     }
 }
