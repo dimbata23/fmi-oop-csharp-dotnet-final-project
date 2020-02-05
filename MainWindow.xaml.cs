@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace fmi_oop_csharp_dotnet_final_project
 {
@@ -20,9 +9,13 @@ namespace fmi_oop_csharp_dotnet_final_project
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        private Game game;
+
         public MainWindow()
         {
             InitializeComponent();
+            game = null;
         }
 
         private void Btn_QuitClick(object sender, RoutedEventArgs e)
@@ -34,6 +27,8 @@ namespace fmi_oop_csharp_dotnet_final_project
         {
             Grd_MenuScreen.Visibility = Visibility.Hidden;
             Grd_GameScreen.Visibility = Visibility.Visible;
+            game = new Game(Cnv_GameCanvas);
+            game.Start();
         }
 
         private void Label_MouseDown(object sender, MouseButtonEventArgs e)

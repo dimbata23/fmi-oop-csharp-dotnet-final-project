@@ -57,7 +57,7 @@
             <Button Grid.Row="0" FontSize="18" Content="✕" Click="Btn_QuitClick" Margin="1140,0,0,0"/>
             <Rectangle Grid.Row="1" Fill="#333"/>
 
-            <Canvas Grid.Row="2" Cursor="Cross" Background="#000"/>
+            <Canvas x:Name="Cnv_GameCanvas" Grid.Row="2" Cursor="Cross" Background="#000"/>
 
         </Grid>
     </Grid>
