@@ -21,6 +21,9 @@ namespace fmi_oop_csharp_dotnet_final_project
 
         // Thread that's running the game loop
         private Thread gameLoopThread;
+
+        // The snake object
+        private Snake snake;
         #endregion
 
         #region Properties
@@ -68,6 +71,7 @@ namespace fmi_oop_csharp_dotnet_final_project
             IsRunning = false;
             Canvas = cnv;
             FPS = fps;
+            snake = new Snake(cnv.ActualWidth / 2, cnv.ActualHeight / 2);
         }
         #endregion
 
@@ -112,6 +116,7 @@ namespace fmi_oop_csharp_dotnet_final_project
         private void Draw()
         {
             canvas.Children.Clear();
+            snake.Draw(canvas);
         }
         #endregion
 
