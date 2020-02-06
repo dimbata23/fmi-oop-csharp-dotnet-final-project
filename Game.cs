@@ -2,12 +2,14 @@
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace fmi_oop_csharp_dotnet_final_project
 {
     class Game
     {
         private const int MILISECONDS_IN_SECOND = 1000;
+        private const int DEFAULT_FPS = 60;
 
         #region Members
         // Whether the game is running or not
@@ -110,7 +112,7 @@ namespace fmi_oop_csharp_dotnet_final_project
 
         private void Update()
         {
-
+            snake.moveTowards(Mouse.GetPosition(canvas));
         }
 
         private void Draw()
