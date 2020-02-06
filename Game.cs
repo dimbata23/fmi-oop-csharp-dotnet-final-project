@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,7 +16,7 @@ namespace fmi_oop_csharp_dotnet_final_project
         // Whether the game is running or not
         private bool isRunning;
 
-        // Update interval of the game in nanoseconds
+        // Update interval of the game in miliseconds
         private int updateInterval;
 
         // Canvas where the game will be drawn
@@ -68,7 +69,7 @@ namespace fmi_oop_csharp_dotnet_final_project
         #endregion
 
         #region Constructors
-        public Game(Canvas cnv, int fps = 60)
+        public Game(Canvas cnv, int fps = DEFAULT_FPS)
         {
             IsRunning = false;
             Canvas = cnv;
@@ -105,6 +106,7 @@ namespace fmi_oop_csharp_dotnet_final_project
                 if (deltaTime < updateInterval)
                     Thread.Sleep((int)(updateInterval - deltaTime));
                 timer.Restart();
+
                 Application.Current.Dispatcher.Invoke(Update);
                 Application.Current.Dispatcher.Invoke(Draw);
             }
@@ -112,7 +114,7 @@ namespace fmi_oop_csharp_dotnet_final_project
 
         private void Update()
         {
-            snake.moveTowards(Mouse.GetPosition(canvas));
+            snake.moveTowards(Mouse.GetPosition(canvas), updateInterval * 0.001);
         }
 
         private void Draw()

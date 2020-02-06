@@ -11,7 +11,7 @@ namespace fmi_oop_csharp_dotnet_final_project
         private const int HEAD_SIZE = 32;
         private const int SIZE = 24;
         private const int DEFAULT_LENGTH = 5;
-        private const double DEFAULT_SPEED = 2;
+        private const double DEFAULT_SPEED = 100;
 
         #region Members
         // Head of the snake
@@ -55,13 +55,13 @@ namespace fmi_oop_csharp_dotnet_final_project
             Canvas.SetTop(head, body[0].Y - HEAD_SIZE / 2);
         }
 
-        public void moveTowards(Point point)
+        public void moveTowards(Point point, double deltaTime)
         {
             for (int i = body.Count - 1; i > 0; i--)
-                body[i] = new Point(body[i].X + (body[i - 1].X - body[i].X) * (DEFAULT_SPEED / SIZE), body[i].Y + (body[i - 1].Y - body[i].Y) * (DEFAULT_SPEED / SIZE));
+                body[i] = new Point(body[i].X + (body[i - 1].X - body[i].X) * (DEFAULT_SPEED * deltaTime / SIZE), body[i].Y + (body[i - 1].Y - body[i].Y) * (DEFAULT_SPEED * deltaTime / SIZE));
 
             var distanceToPoint = Point.Subtract(point, body[0]).Length;
-            body[0] = new Point(body[0].X + (point.X - body[0].X) * (DEFAULT_SPEED / distanceToPoint), body[0].Y + (point.Y - body[0].Y) * (DEFAULT_SPEED / distanceToPoint));
+            body[0] = new Point(body[0].X + (point.X - body[0].X) * (DEFAULT_SPEED * deltaTime / distanceToPoint), body[0].Y + (point.Y - body[0].Y) * (DEFAULT_SPEED * deltaTime / distanceToPoint));
         }
         #endregion
     }
