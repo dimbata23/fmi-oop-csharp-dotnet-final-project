@@ -27,6 +27,12 @@ namespace fmi_oop_csharp_dotnet_final_project
 
         // The snake object
         private Snake snake;
+
+        // The food object
+        private Food food;
+
+        // Random number generator
+        private Random rand;
         #endregion
 
         #region Properties
@@ -75,6 +81,8 @@ namespace fmi_oop_csharp_dotnet_final_project
             Canvas = cnv;
             FPS = fps;
             snake = new Snake(cnv.ActualWidth / 2, cnv.ActualHeight / 2);
+            rand = new Random();
+            food = new Food(new Point(rand.Next() % canvas.ActualWidth, rand.Next() % canvas.ActualHeight));
         }
         #endregion
 
@@ -121,6 +129,7 @@ namespace fmi_oop_csharp_dotnet_final_project
         {
             canvas.Children.Clear();
             snake.Draw(canvas);
+            food.Draw(canvas);
         }
         #endregion
 
