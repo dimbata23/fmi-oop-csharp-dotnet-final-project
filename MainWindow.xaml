@@ -53,8 +53,8 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Rectangle Grid.Row="0" Fill="#222"/>
-            <Label Grid.Row="0" Margin="3" Foreground="#fff" FontSize="18" Content="This is a sample title" MouseDown="Label_MouseDown"/>
-            <Button Grid.Row="0" FontSize="18" Content="✕" Click="Btn_QuitClick" Margin="1140,0,0,0"/>
+            <Label x:Name="Lbl_Title" Grid.Row="0" Margin="3" Foreground="#fff" FontSize="18" Content="This is a sample title" MouseDown="Label_MouseDown"/>
+            <Button Grid.Row="0" FontSize="18" Width="60" Content="✕" Click="Btn_QuitClick" HorizontalAlignment="Right"/>
             <Rectangle Grid.Row="1" Fill="#333"/>
 
             <Canvas x:Name="Cnv_GameCanvas" Grid.Row="2" Cursor="Cross" Background="#000"/>
