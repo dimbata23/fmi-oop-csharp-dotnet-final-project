@@ -27,6 +27,7 @@ namespace fmi_oop_csharp_dotnet_final_project
         {
             Grd_MenuScreen.Visibility = Visibility.Hidden;
             Grd_GameScreen.Visibility = Visibility.Visible;
+            Wnd_MainWindow.WindowState = WindowState.Maximized;
             game = new Game(Cnv_GameCanvas);
             game.Start();
         }
