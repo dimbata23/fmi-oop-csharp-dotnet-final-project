@@ -128,8 +128,8 @@ namespace fmi_oop_csharp_dotnet_final_project
         private void Draw()
         {
             canvas.Children.Clear();
-            snake.Draw(canvas);
             food.Draw(canvas);
+            snake.Draw(canvas);
         }
         #endregion
 
