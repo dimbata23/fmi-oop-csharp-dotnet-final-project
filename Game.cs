@@ -11,6 +11,7 @@ namespace fmi_oop_csharp_dotnet_final_project
     {
         private const int MILISECONDS_IN_SECOND = 1000;
         private const int DEFAULT_FPS = 60;
+        private const int GROWTH_RATE = 3;
 
         #region Members
         // Whether the game is running or not
@@ -33,6 +34,9 @@ namespace fmi_oop_csharp_dotnet_final_project
 
         // Random number generator
         private Random rand;
+
+        // The player's score
+        private uint score; 
         #endregion
 
         #region Properties
@@ -80,9 +84,11 @@ namespace fmi_oop_csharp_dotnet_final_project
             IsRunning = false;
             Canvas = cnv;
             FPS = fps;
-            snake = new Snake(cnv.ActualWidth / 2, cnv.ActualHeight / 2);
+            snake = new Snake(canvas.ActualWidth / 2, canvas.ActualHeight / 2);
             rand = new Random();
-            food = new Food(new Point(rand.Next() % canvas.ActualWidth, rand.Next() % canvas.ActualHeight));
+            food = new Food();
+            food.Position = new Point(rand.Next() % (canvas.ActualWidth - food.Size), rand.Next() % (canvas.ActualHeight - food.Size));
+            score = 0;
         }
         #endregion
 
@@ -123,6 +129,24 @@ namespace fmi_oop_csharp_dotnet_final_project
         private void Update()
         {
             snake.MoveTowards(Mouse.GetPosition(canvas), updateInterval * 0.001);
+            var snakeBody = snake.Body;
+            var snakeSize = snake.Size;
+            var snakeHeadSize = snake.HeadSize;
+            double dist;
+            for (var curr = snakeBody.First.Next.Next.Next; curr != null; curr = curr.Next)
+            {
+                dist = Point.Subtract(snakeBody.First.Value, curr.Value).Length;
+                if (dist < (snakeHeadSize / 2 + snakeSize / 2))
+                    snake = new Snake(canvas.ActualWidth / 2, canvas.ActualHeight / 2);
+            }
+
+            dist = Point.Subtract(snakeBody.First.Value, new Point(food.Position.X + food.Size/2, food.Position.Y + food.Size/2)).Length;
+            if (dist < (snakeHeadSize / 2 + food.Size / 2))
+            {
+                food.Position = new Point(rand.Next() % (canvas.ActualWidth - food.Size), rand.Next() % (canvas.ActualHeight - food.Size));
+                ++score;
+                snake.Grow(GROWTH_RATE);
+            }
         }
 
         private void Draw()

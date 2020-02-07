@@ -25,6 +25,8 @@ namespace fmi_oop_csharp_dotnet_final_project
             get => position;
             set => position = new Point(value.X, value.Y);
         }
+
+        public int Size { get => SIZE; }
         #endregion
 
         #region Constructors

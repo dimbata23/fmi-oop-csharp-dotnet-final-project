@@ -15,13 +15,19 @@ namespace fmi_oop_csharp_dotnet_final_project
 
         #region Members
         // Head of the snake
-        private Ellipse head;
+        private readonly Ellipse head;
 
         // List of points where ellipses will be drawn
         private LinkedList<Point> body;
 
         // Color of the snake
         private SolidColorBrush color = new SolidColorBrush(Colors.Green);
+        #endregion
+
+        #region Properties
+        public LinkedList<Point> Body { get => body; }
+        public int Size { get => SIZE; }
+        public int HeadSize { get => HEAD_SIZE; }
         #endregion
 
         #region Constructors
@@ -73,6 +79,12 @@ namespace fmi_oop_csharp_dotnet_final_project
                     head.Value.X + (point.X - head.Value.X) * (DEFAULT_SPEED * deltaTime / distanceToPoint),
                     head.Value.Y + (point.Y - head.Value.Y) * (DEFAULT_SPEED * deltaTime / distanceToPoint)
                 );
+        }
+
+        public void Grow(int factor = 1)
+        {
+            for (int i = 0; i < factor; i++)
+                body.AddLast(body.Last.Value);
         }
         #endregion
     }
