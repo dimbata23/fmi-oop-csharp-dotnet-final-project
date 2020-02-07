@@ -122,7 +122,7 @@ namespace fmi_oop_csharp_dotnet_final_project
 
         private void Update()
         {
-            snake.moveTowards(Mouse.GetPosition(canvas), updateInterval * 0.001);
+            snake.MoveTowards(Mouse.GetPosition(canvas), updateInterval * 0.001);
         }
 
         private void Draw()
