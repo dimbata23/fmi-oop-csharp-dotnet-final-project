@@ -55,7 +55,7 @@ namespace fmi_oop_csharp_dotnet_final_project
             Canvas.SetTop(head, body.First.Value.Y - HEAD_SIZE / 2);
         }
 
-        public void moveTowards(Point point, double deltaTime)
+        public void MoveTowards(Point point, double deltaTime)
         {
             for (var curr = body.Last; curr.Previous != null; curr = curr.Previous)
             {
