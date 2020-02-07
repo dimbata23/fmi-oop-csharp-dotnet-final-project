@@ -18,7 +18,7 @@ namespace fmi_oop_csharp_dotnet_final_project
         private Ellipse head;
 
         // List of points where ellipses will be drawn
-        private List<Point> body;
+        private LinkedList<Point> body;
 
         // Color of the snake
         private SolidColorBrush color = new SolidColorBrush(Colors.Green);
@@ -27,10 +27,10 @@ namespace fmi_oop_csharp_dotnet_final_project
         #region Constructors
         public Snake(double x, double y)
         {
-            body = new List<Point>();
+            body = new LinkedList<Point>();
 
             for (int i = 0; i < DEFAULT_LENGTH; i++)
-                body.Add(new Point(x + i * SIZE, y));
+                body.AddLast(new Point(x + i * SIZE, y));
 
             head = new Ellipse();
             head.Width = HEAD_SIZE;
@@ -51,17 +51,28 @@ namespace fmi_oop_csharp_dotnet_final_project
             polyline.StrokeEndLineCap = PenLineCap.Triangle;
             canvas.Children.Add(polyline);
             canvas.Children.Add(head);
-            Canvas.SetLeft(head, body[0].X - HEAD_SIZE / 2);
-            Canvas.SetTop(head, body[0].Y - HEAD_SIZE / 2);
+            Canvas.SetLeft(head, body.First.Value.X - HEAD_SIZE / 2);
+            Canvas.SetTop(head, body.First.Value.Y - HEAD_SIZE / 2);
         }
 
         public void moveTowards(Point point, double deltaTime)
         {
-            for (int i = body.Count - 1; i > 0; i--)
-                body[i] = new Point(body[i].X + (body[i - 1].X - body[i].X) * (DEFAULT_SPEED * deltaTime / SIZE), body[i].Y + (body[i - 1].Y - body[i].Y) * (DEFAULT_SPEED * deltaTime / SIZE));
+            for (var curr = body.Last; curr.Previous != null; curr = curr.Previous)
+            {
+                curr.Value =
+                    new Point(
+                        curr.Value.X + (curr.Previous.Value.X - curr.Value.X) * (DEFAULT_SPEED * deltaTime / SIZE),
+                        curr.Value.Y + (curr.Previous.Value.Y - curr.Value.Y) * (DEFAULT_SPEED * deltaTime / SIZE)
+                    );
+            }
 
-            var distanceToPoint = Point.Subtract(point, body[0]).Length;
-            body[0] = new Point(body[0].X + (point.X - body[0].X) * (DEFAULT_SPEED * deltaTime / distanceToPoint), body[0].Y + (point.Y - body[0].Y) * (DEFAULT_SPEED * deltaTime / distanceToPoint));
+            var head = body.First;
+            var distanceToPoint = Point.Subtract(point, head.Value).Length;
+            head.Value =
+                new Point(
+                    head.Value.X + (point.X - head.Value.X) * (DEFAULT_SPEED * deltaTime / distanceToPoint),
+                    head.Value.Y + (point.Y - head.Value.Y) * (DEFAULT_SPEED * deltaTime / distanceToPoint)
+                );
         }
         #endregion
     }
