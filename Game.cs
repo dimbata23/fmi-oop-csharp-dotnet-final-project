@@ -30,10 +30,10 @@ namespace fmi_oop_csharp_dotnet_final_project
         private Snake snake;
 
         // The food object
-        private Food food;
+        private readonly Food food;
 
         // Random number generator
-        private Random rand;
+        private readonly Random rand;
 
         // The player's score
         private uint score; 
@@ -128,20 +128,23 @@ namespace fmi_oop_csharp_dotnet_final_project
 
         private void Update()
         {
-            snake.MoveTowards(Mouse.GetPosition(canvas), updateInterval * 0.001);
-            var snakeBody = snake.Body;
-            var snakeSize = snake.Size;
-            var snakeHeadSize = snake.HeadSize;
+            snake.Move(Mouse.GetPosition(canvas), updateInterval * 0.001);
+
+            // Collision detection
             double dist;
-            for (var curr = snakeBody.First.Next.Next.Next; curr != null; curr = curr.Next)
+            for (var curr = snake.Body.First.Next.Next.Next; curr != null; curr = curr.Next)
             {
-                dist = Point.Subtract(snakeBody.First.Value, curr.Value).Length;
-                if (dist < (snakeHeadSize / 2 + snakeSize / 2))
+                dist = Point.Subtract(snake.Body.First.Value, curr.Value).Length;
+                if (dist < (snake.HeadSize / 2.1 + snake.Size / 2.1))
+                {
+                    Thread.Sleep(1000); // Temporary
                     snake = new Snake(canvas.ActualWidth / 2, canvas.ActualHeight / 2);
+                }
             }
 
-            dist = Point.Subtract(snakeBody.First.Value, new Point(food.Position.X + food.Size/2, food.Position.Y + food.Size/2)).Length;
-            if (dist < (snakeHeadSize / 2 + food.Size / 2))
+            // Eaten food detection
+            dist = Point.Subtract(snake.Body.First.Value, new Point(food.Position.X + food.Size/2, food.Position.Y + food.Size/2)).Length;
+            if (dist < (snake.HeadSize / 2 + food.Size / 2))
             {
                 food.Position = new Point(rand.Next() % (canvas.ActualWidth - food.Size), rand.Next() % (canvas.ActualHeight - food.Size));
                 ++score;

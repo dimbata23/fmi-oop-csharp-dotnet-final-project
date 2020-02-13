@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -12,6 +13,8 @@ namespace fmi_oop_csharp_dotnet_final_project
         private const int SIZE = 24;
         private const int DEFAULT_LENGTH = 5;
         private const double DEFAULT_SPEED = 100;
+        private const double MAX_ROTATE_ANGLE_RAD = Math.PI / 6;
+        private const double MAX_ROTATE_ANGLE_DEG = MAX_ROTATE_ANGLE_RAD * 180 / Math.PI;
 
         #region Members
         // Head of the snake
@@ -61,7 +64,31 @@ namespace fmi_oop_csharp_dotnet_final_project
             Canvas.SetTop(head, body.First.Value.Y - HEAD_SIZE / 2);
         }
 
-        public void MoveTowards(Point point, double deltaTime)
+        public void Move(Point point, double deltaTime)
+        {
+            Vector snakeToMouseVector = Point.Subtract(point, Body.First.Value);
+            if (snakeToMouseVector.Length > Size / 2)
+            {
+                Vector snakeVector = Point.Subtract(Body.First.Value, Body.First.Next.Value);
+                var angle = Vector.AngleBetween(snakeVector, snakeToMouseVector);
+                if (angle > MAX_ROTATE_ANGLE_DEG || angle < -MAX_ROTATE_ANGLE_DEG)
+                {
+                    double rotateAngle = Math.Sign(angle) * MAX_ROTATE_ANGLE_RAD;
+                    Vector v2 = new Vector(snakeVector.X * Math.Cos(rotateAngle) - snakeVector.Y * Math.Sin(rotateAngle),
+                                           snakeVector.X * Math.Sin(rotateAngle) + snakeVector.Y * Math.Cos(rotateAngle));
+                    v2.Normalize();
+                    v2.X *= DEFAULT_SPEED;
+                    v2.Y *= DEFAULT_SPEED;
+                    MoveTowards(new Point(Body.First.Value.X + v2.X, Body.First.Value.Y + v2.Y), deltaTime);
+                }
+                else
+                {
+                    MoveTowards(point, deltaTime);
+                }
+            }
+        }
+
+        private void MoveTowards(Point point, double deltaTime)
         {
             for (var curr = body.Last; curr.Previous != null; curr = curr.Previous)
             {
