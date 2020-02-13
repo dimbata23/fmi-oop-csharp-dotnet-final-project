@@ -85,8 +85,7 @@ namespace fmi_oop_csharp_dotnet_final_project
             set
             {
                 score = value;
-                EventHandler<string> test = ScoreChanged;
-                test?.Invoke(this, "Score: " + score);
+                ScoreChanged?.Invoke(this, "Score: " + score);
             }
         }
         #endregion
