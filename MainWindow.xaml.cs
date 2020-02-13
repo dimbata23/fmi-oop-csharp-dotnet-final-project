@@ -33,6 +33,8 @@ namespace fmi_oop_csharp_dotnet_final_project
             game.Start();
         }
 
+        // TODO: Add game difficulty menu
+
         private void Label_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)

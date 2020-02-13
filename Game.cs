@@ -31,8 +31,10 @@ namespace fmi_oop_csharp_dotnet_final_project
         // The snake object
         private Snake snake;
 
+        // TODO: Add obsticles and walls
+
         // The food object
-        private readonly Food food;
+        private readonly Food food; // TODO: Change to List of Food to create more than one food
 
         // Random number generator
         private readonly Random rand;
