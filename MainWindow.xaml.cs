@@ -29,6 +29,7 @@ namespace fmi_oop_csharp_dotnet_final_project
             Grd_GameScreen.Visibility = Visibility.Visible;
             Wnd_MainWindow.WindowState = WindowState.Maximized;
             game = new Game(Cnv_GameCanvas);
+            game.ScoreChanged += UpdateTitle;
             game.Start();
         }
 
@@ -36,6 +37,11 @@ namespace fmi_oop_csharp_dotnet_final_project
         {
             if (e.ChangedButton == MouseButton.Left)
                 Wnd_MainWindow.DragMove();
+        }
+
+        private void UpdateTitle(object sender, string e)
+        {
+            Lbl_Title.Content = e;
         }
     }
 }

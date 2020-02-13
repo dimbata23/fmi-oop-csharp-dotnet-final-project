@@ -13,6 +13,8 @@ namespace fmi_oop_csharp_dotnet_final_project
         private const int DEFAULT_FPS = 60;
         private const int GROWTH_RATE = 3;
 
+        public event EventHandler<string> ScoreChanged;
+
         #region Members
         // Whether the game is running or not
         private bool isRunning;
@@ -76,6 +78,17 @@ namespace fmi_oop_csharp_dotnet_final_project
                     updateInterval = MILISECONDS_IN_SECOND / value;
             }
         }
+
+        public uint Score
+        {
+            get => score;
+            set
+            {
+                score = value;
+                EventHandler<string> test = ScoreChanged;
+                test?.Invoke(this, "Score: " + score);
+            }
+        }
         #endregion
 
         #region Constructors
@@ -88,7 +101,6 @@ namespace fmi_oop_csharp_dotnet_final_project
             rand = new Random();
             food = new Food();
             food.Position = new Point(rand.Next() % (canvas.ActualWidth - food.Size), rand.Next() % (canvas.ActualHeight - food.Size));
-            score = 0;
         }
         #endregion
 
@@ -100,6 +112,7 @@ namespace fmi_oop_csharp_dotnet_final_project
                 IsRunning = true;
                 gameLoopThread = new Thread(GameLoop);
                 gameLoopThread.Start();
+                Score = 0;
             }
         }
 
@@ -147,7 +160,7 @@ namespace fmi_oop_csharp_dotnet_final_project
             if (dist < (snake.HeadSize / 2 + food.Size / 2))
             {
                 food.Position = new Point(rand.Next() % (canvas.ActualWidth - food.Size), rand.Next() % (canvas.ActualHeight - food.Size));
-                ++score;
+                ++Score;
                 snake.Grow(GROWTH_RATE);
             }
         }
