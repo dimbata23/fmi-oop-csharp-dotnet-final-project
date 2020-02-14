@@ -54,7 +54,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Button Grid.Row="0" Width="900" Height="64" Content="Increase Difficulty" Click="Btn_IncreaseDifficultyClick"/>
-            <Slider x:Name="Sld_Difficulty" Grid.Row="1" Width="900" Margin="0 25 0 0" Height="64" Maximum="10" Minimum="0" Value="5" SmallChange="1" TickPlacement="TopLeft"/>
+            <Slider x:Name="Sld_Difficulty" Grid.Row="1" Width="900" Margin="0 25 0 0" Height="64" Maximum="10" Minimum="0" Value="5" SmallChange="1" TickPlacement="TopLeft" IsSnapToTickEnabled="True"/>
             <Button Grid.Row="2" Width="900" Height="64" Content="Decrease Difficulty" Click="Btn_DecreaseDifficultyClick"/>
             <Button Grid.Row="3" Width="900" Height="64" Content="Back" Click="Btn_BackClick"/>
         </Grid>

@@ -16,8 +16,8 @@ namespace fmi_oop_csharp_dotnet_final_project
         private const int MILISECONDS_IN_SECOND = 1000;
         private const int DEFAULT_FPS = 60;
         private const int GROWTH_RATE = 3;
-        private const int DEFAULT_STARTING_FOODS = 8;
-        private const int DEFAULT_STARTING_WALLS = 12;
+        private const int DEFAULT_STARTING_FOODS = 12;
+        private const int DEFAULT_STARTING_WALLS = 15;
         private const uint DEFAULT_DIFFICULTY = 5;
         private const uint MIN_DIFFICULTY = 0;
         private const uint MAX_DIFFICULTY = 10;
@@ -113,20 +113,20 @@ namespace fmi_oop_csharp_dotnet_final_project
         #endregion
 
         #region Constructors
-        public Game(Canvas cnv, int fps = DEFAULT_FPS)
+        public Game(Canvas cnv, uint difficulty = DEFAULT_DIFFICULTY, int fps = DEFAULT_FPS)
         {
-            Difficulty = DEFAULT_DIFFICULTY;
+            Difficulty = difficulty;
             rand = new Random();
             IsRunning = false;
             Canvas = cnv;
             FPS = fps;
             snake = new Snake(canvas.ActualWidth * 0.5, canvas.ActualHeight * 0.5);
             foods = new LinkedList<Food>();
-            for (int i = 0; i < DEFAULT_STARTING_FOODS; i++)
+            for (int i = 0; i < DEFAULT_STARTING_FOODS + DEFAULT_DIFFICULTY - difficulty; i++)
                 foods.AddLast(new Food(canvas, rand.Next(), (double)difficulty / MAX_DIFFICULTY));
 
             walls = new LinkedList<Wall>();
-            for (int i = 0; i < DEFAULT_STARTING_WALLS; i++)
+            for (int i = 0; i < DEFAULT_STARTING_WALLS + (difficulty - DEFAULT_DIFFICULTY) * 3; i++)
             {
                 walls.AddLast(new Wall(canvas, rand.Next()));
 

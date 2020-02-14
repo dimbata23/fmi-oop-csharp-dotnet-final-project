@@ -15,7 +15,7 @@ namespace fmi_oop_csharp_dotnet_final_project
         public MainWindow()
         {
             InitializeComponent();
-            game = new Game(Cnv_GameCanvas);
+            game = null;
         }
 
         private void Btn_QuitClick(object sender, RoutedEventArgs e)
@@ -28,8 +28,8 @@ namespace fmi_oop_csharp_dotnet_final_project
             Grd_MenuScreen.Visibility = Visibility.Hidden;
             Grd_GameScreen.Visibility = Visibility.Visible;
             Wnd_MainWindow.WindowState = WindowState.Maximized;
+            game = new Game(Cnv_GameCanvas, (uint)Sld_Difficulty.Value);
             game.ScoreChanged += UpdateTitle;
-            game.Difficulty = (uint)Sld_Difficulty.Value;
             game.Start();
         }
 
@@ -46,7 +46,7 @@ namespace fmi_oop_csharp_dotnet_final_project
         }
 
         private void Btn_IncreaseDifficultyClick(object sender, RoutedEventArgs e)
-            => --Sld_Difficulty.Value;
+            => ++Sld_Difficulty.Value;
 
         private void Btn_DecreaseDifficultyClick(object sender, RoutedEventArgs e)
             => --Sld_Difficulty.Value;
@@ -59,7 +59,7 @@ namespace fmi_oop_csharp_dotnet_final_project
 
         private void UpdateTitle(object sender, string e)
         {
-            Lbl_Title.Content = e;
+            Lbl_Title.Content = "Difficulty: " + game.Difficulty + " / 10\t\t" + e;
         }
     }
 }
