@@ -9,13 +9,15 @@ namespace fmi_oop_csharp_dotnet_final_project
 {
     class Snake
     {
-        private const int HEAD_SIZE = 32;
-        private const int SIZE = 24;
+        #region Constants
+        private const int DEFAULT_HEAD_SIZE = 32;
+        private const int DEFAULT_SIZE = 24;
         private const int DEFAULT_LENGTH = 5;
         private const double DEFAULT_SPEED = 100;
         private const double MAX_ROTATE_ANGLE_RAD = Math.PI / 6;
         private const double MAX_ROTATE_ANGLE_DEG = MAX_ROTATE_ANGLE_RAD * 180 / Math.PI;
-        private const double DETECTION_FACTOR = 0.5;
+        private const double DETECTION_FACTOR = 0.5; 
+        #endregion
 
         #region Members
         // Head of the snake
@@ -25,27 +27,56 @@ namespace fmi_oop_csharp_dotnet_final_project
         private LinkedList<Point> body;
 
         // Color of the snake
-        private SolidColorBrush color = new SolidColorBrush(Colors.Green);
+        private SolidColorBrush brush = new SolidColorBrush(Colors.Green);
+
+        private double sizeFactor;
+
+        private double speedFactor;
         #endregion
 
         #region Properties
         public LinkedList<Point> Body { get => body; }
-        public int Size { get => SIZE; }
-        public int HeadSize { get => HEAD_SIZE; }
+        public double Size { get => DEFAULT_SIZE * sizeFactor; }
+        public double HeadSize { get => DEFAULT_HEAD_SIZE * sizeFactor; }
+        public Color Color
+        {
+            get => brush.Color;
+            set => brush.Color = value;
+        }
+        public double SizeFactor
+        {
+            get => sizeFactor;
+            set
+            {
+                if (value >= 0)
+                    sizeFactor = value;
+            }
+        }
+        public double SpeedFactor
+        {
+            get => speedFactor;
+            set
+            {
+                if (value > 0)
+                    speedFactor = value;
+            }
+        }
         #endregion
 
         #region Constructors
-        public Snake(double x, double y)
+        public Snake(double x, double y, double sizeFactor = 1, double speedFactor = 1)
         {
             body = new LinkedList<Point>();
+            SizeFactor = sizeFactor;
+            SpeedFactor = speedFactor;
 
             for (int i = 0; i < DEFAULT_LENGTH; i++)
-                body.AddLast(new Point(x + i * SIZE, y));
+                body.AddLast(new Point(x + i * Size, y));
 
             head = new Ellipse();
-            head.Width = HEAD_SIZE;
-            head.Height = HEAD_SIZE;
-            head.Fill = color;
+            head.Width = HeadSize;
+            head.Height = HeadSize;
+            head.Fill = brush;
         }
         #endregion
 
@@ -56,19 +87,19 @@ namespace fmi_oop_csharp_dotnet_final_project
             foreach (var point in body)
                 polyline.Points.Add(point);
 
-            polyline.StrokeThickness = SIZE;
-            polyline.Stroke = color;
+            polyline.StrokeThickness = Size;
+            polyline.Stroke = brush;
             polyline.StrokeEndLineCap = PenLineCap.Triangle;
             canvas.Children.Add(polyline);
             canvas.Children.Add(head);
-            Canvas.SetLeft(head, body.First.Value.X - HEAD_SIZE / 2);
-            Canvas.SetTop(head, body.First.Value.Y - HEAD_SIZE / 2);
+            Canvas.SetLeft(head, body.First.Value.X - HeadSize / 2);
+            Canvas.SetTop(head, body.First.Value.Y - HeadSize / 2);
         }
 
         public void Move(Point point, double deltaTime)
         {
             Vector snakeToMouseVector = Point.Subtract(point, Body.First.Value);
-            if (snakeToMouseVector.Length > Size / 2)
+            if (snakeToMouseVector.Length > Size * 0.5)
             {
                 Vector snakeVector = Point.Subtract(Body.First.Value, Body.First.Next.Value);
                 var angle = Vector.AngleBetween(snakeVector, snakeToMouseVector);
@@ -78,8 +109,8 @@ namespace fmi_oop_csharp_dotnet_final_project
                     Vector v2 = new Vector(snakeVector.X * Math.Cos(rotateAngle) - snakeVector.Y * Math.Sin(rotateAngle),
                                            snakeVector.X * Math.Sin(rotateAngle) + snakeVector.Y * Math.Cos(rotateAngle));
                     v2.Normalize();
-                    v2.X *= DEFAULT_SPEED;
-                    v2.Y *= DEFAULT_SPEED;
+                    v2.X *= DEFAULT_SPEED * speedFactor;
+                    v2.Y *= DEFAULT_SPEED * speedFactor;
                     MoveTowards(new Point(Body.First.Value.X + v2.X, Body.First.Value.Y + v2.Y), deltaTime);
                 }
                 else
@@ -95,8 +126,8 @@ namespace fmi_oop_csharp_dotnet_final_project
             {
                 curr.Value =
                     new Point(
-                        curr.Value.X + (curr.Previous.Value.X - curr.Value.X) * (DEFAULT_SPEED * deltaTime / SIZE),
-                        curr.Value.Y + (curr.Previous.Value.Y - curr.Value.Y) * (DEFAULT_SPEED * deltaTime / SIZE)
+                        curr.Value.X + (curr.Previous.Value.X - curr.Value.X) * (DEFAULT_SPEED * speedFactor * deltaTime / Size),
+                        curr.Value.Y + (curr.Previous.Value.Y - curr.Value.Y) * (DEFAULT_SPEED * speedFactor * deltaTime / Size)
                     );
             }
 
@@ -104,8 +135,8 @@ namespace fmi_oop_csharp_dotnet_final_project
             double distanceToPoint = Point.Subtract(point, head.Value).Length;
             head.Value =
                 new Point(
-                    head.Value.X + (point.X - head.Value.X) * (DEFAULT_SPEED * deltaTime / distanceToPoint),
-                    head.Value.Y + (point.Y - head.Value.Y) * (DEFAULT_SPEED * deltaTime / distanceToPoint)
+                    head.Value.X + (point.X - head.Value.X) * (DEFAULT_SPEED * speedFactor * deltaTime / distanceToPoint),
+                    head.Value.Y + (point.Y - head.Value.Y) * (DEFAULT_SPEED * speedFactor * deltaTime / distanceToPoint)
                 );
         }
 
