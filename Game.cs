@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace fmi_oop_csharp_dotnet_final_project
 {
@@ -136,7 +137,8 @@ namespace fmi_oop_csharp_dotnet_final_project
                 timer.Restart();
 
                 Application.Current.Dispatcher.Invoke(Update);
-                Application.Current.Dispatcher.Invoke(Draw);
+                if (IsRunning)
+                    Application.Current.Dispatcher.Invoke(Draw);
             }
         }
 
@@ -144,20 +146,11 @@ namespace fmi_oop_csharp_dotnet_final_project
         {
             snake.Move(Mouse.GetPosition(canvas), updateInterval * 0.001);
 
-            // Collision detection
-            double dist;
-            for (var curr = snake.Body.First.Next.Next.Next; curr != null; curr = curr.Next)
-            {
-                dist = Point.Subtract(snake.Body.First.Value, curr.Value).Length;
-                if (dist < (snake.HeadSize / 2.1 + snake.Size / 2.1))
-                {
-                    Thread.Sleep(1000); // Temporary
-                    snake = new Snake(canvas.ActualWidth / 2, canvas.ActualHeight / 2);
-                }
-            }
+            if (snake.DetectSelfCollision())
+                GameOver();
 
             // Eaten food detection
-            dist = Point.Subtract(snake.Body.First.Value, new Point(food.Position.X + food.Size/2, food.Position.Y + food.Size/2)).Length;
+            double dist = Point.Subtract(snake.Body.First.Value, new Point(food.Position.X + food.Size/2, food.Position.Y + food.Size/2)).Length;
             if (dist < (snake.HeadSize / 2 + food.Size / 2))
             {
                 food.Position = new Point(rand.Next() % (canvas.ActualWidth - food.Size), rand.Next() % (canvas.ActualHeight - food.Size));
@@ -172,6 +165,20 @@ namespace fmi_oop_csharp_dotnet_final_project
             food.Draw(canvas);
             snake.Draw(canvas);
         }
+
+        private void GameOver()
+        {
+            TextBlock Txt_gameOver = new TextBlock();
+            Txt_gameOver.Width = canvas.ActualWidth;
+            Txt_gameOver.Text = "Game Over!";
+            Txt_gameOver.TextAlignment = TextAlignment.Center;
+            Txt_gameOver.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+            Txt_gameOver.Background = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+            Canvas.SetTop(Txt_gameOver, canvas.ActualHeight * 0.45);
+            canvas.Children.Add(Txt_gameOver);
+            Stop();
+        }
+
         #endregion
 
     }

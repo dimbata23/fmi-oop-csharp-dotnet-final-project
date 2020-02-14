@@ -15,6 +15,7 @@ namespace fmi_oop_csharp_dotnet_final_project
         private const double DEFAULT_SPEED = 100;
         private const double MAX_ROTATE_ANGLE_RAD = Math.PI / 6;
         private const double MAX_ROTATE_ANGLE_DEG = MAX_ROTATE_ANGLE_RAD * 180 / Math.PI;
+        private const double DETECTION_FACTOR = 0.5;
 
         #region Members
         // Head of the snake
@@ -100,7 +101,7 @@ namespace fmi_oop_csharp_dotnet_final_project
             }
 
             var head = body.First;
-            var distanceToPoint = Point.Subtract(point, head.Value).Length;
+            double distanceToPoint = Point.Subtract(point, head.Value).Length;
             head.Value =
                 new Point(
                     head.Value.X + (point.X - head.Value.X) * (DEFAULT_SPEED * deltaTime / distanceToPoint),
@@ -112,6 +113,18 @@ namespace fmi_oop_csharp_dotnet_final_project
         {
             for (int i = 0; i < factor; i++)
                 body.AddLast(body.Last.Value);
+        }
+
+        public bool DetectSelfCollision()
+        {
+            double dist;
+            for (var curr = Body.First.Next.Next.Next; curr != null; curr = curr.Next)
+            {
+                dist = Point.Subtract(Body.First.Value, curr.Value).Length;
+                if (dist < (HeadSize * DETECTION_FACTOR + Size * DETECTION_FACTOR))
+                    return true;
+            }
+            return false;
         }
         #endregion
     }
