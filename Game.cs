@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows;
@@ -10,9 +11,12 @@ namespace fmi_oop_csharp_dotnet_final_project
 {
     class Game
     {
+        #region Constants
         private const int MILISECONDS_IN_SECOND = 1000;
         private const int DEFAULT_FPS = 60;
         private const int GROWTH_RATE = 3;
+        private const int DEFAULT_STARTING_FOODS = 8;
+        #endregion
 
         public event EventHandler<string> ScoreChanged;
 
@@ -34,14 +38,14 @@ namespace fmi_oop_csharp_dotnet_final_project
 
         // TODO: Add obsticles and walls
 
-        // The food object
-        private readonly Food food; // TODO: Change to List of Food to create more than one food
+        // The foods in the game
+        private LinkedList<Food> foods;
+
+        // The player's score
+        private uint score;
 
         // Random number generator
         private readonly Random rand;
-
-        // The player's score
-        private uint score; 
         #endregion
 
         #region Properties
@@ -96,13 +100,14 @@ namespace fmi_oop_csharp_dotnet_final_project
         #region Constructors
         public Game(Canvas cnv, int fps = DEFAULT_FPS)
         {
+            rand = new Random();
             IsRunning = false;
             Canvas = cnv;
             FPS = fps;
-            snake = new Snake(canvas.ActualWidth / 2, canvas.ActualHeight / 2);
-            rand = new Random();
-            food = new Food();
-            food.Position = new Point(rand.Next() % (canvas.ActualWidth - food.Size), rand.Next() % (canvas.ActualHeight - food.Size));
+            snake = new Snake(canvas.ActualWidth * 0.5, canvas.ActualHeight * 0.5);
+            foods = new LinkedList<Food>();
+            for (int i = 0; i < DEFAULT_STARTING_FOODS; i++)
+                foods.AddLast(new Food(canvas, rand.Next()));
         }
         #endregion
 
@@ -144,25 +149,36 @@ namespace fmi_oop_csharp_dotnet_final_project
 
         private void Update()
         {
+            // Remove dead food
+            for (var currNode = foods.First; currNode != null; currNode = currNode.Next)
+            {
+                if (currNode.Value.IsDead)
+                    currNode.Value = new Food(canvas, rand.Next());
+            }
+
             snake.Move(Mouse.GetPosition(canvas), updateInterval * 0.001);
 
             if (snake.DetectSelfCollision())
                 GameOver();
 
             // Eaten food detection
-            double dist = Point.Subtract(snake.Body.First.Value, new Point(food.Position.X + food.Size/2, food.Position.Y + food.Size/2)).Length;
-            if (dist < (snake.HeadSize / 2 + food.Size / 2))
+            for (var currFoodNode = foods.First; currFoodNode != null; currFoodNode = currFoodNode.Next)
             {
-                food.Position = new Point(rand.Next() % (canvas.ActualWidth - food.Size), rand.Next() % (canvas.ActualHeight - food.Size));
-                ++Score;
-                snake.Grow(GROWTH_RATE);
+                double dist = Point.Subtract(snake.Body.First.Value, new Point(currFoodNode.Value.Position.X + currFoodNode.Value.Size * 0.5, currFoodNode.Value.Position.Y + currFoodNode.Value.Size * 0.5)).Length;
+                if (dist < (snake.HeadSize * 0.5 + currFoodNode.Value.Size * 0.5))
+                {
+                    currFoodNode.Value = new Food(canvas, rand.Next());
+                    ++Score;
+                    snake.Grow(GROWTH_RATE);
+                }
             }
         }
 
         private void Draw()
         {
             canvas.Children.Clear();
-            food.Draw(canvas);
+            foreach (Food food in foods)
+                food.Draw(canvas);
             snake.Draw(canvas);
         }
 

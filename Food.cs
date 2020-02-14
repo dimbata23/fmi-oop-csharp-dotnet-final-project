@@ -12,11 +12,16 @@ namespace fmi_oop_csharp_dotnet_final_project
 {
     class Food
     {
-        private const int SIZE = 24;
+        private const int DEFAULT_SIZE = 24;
+        private const int DEFAULT_MIN_LIFETIME = 10; // seconds
+        private const int DEFAULT_MAX_LIFETIME = 30; // seconds
 
         #region Members
         private Point position;
         private Ellipse ellipse;
+        private double sizeFactor;
+        private readonly Random rand;
+        private bool isDead;
         #endregion
 
         #region Properties
@@ -26,20 +31,45 @@ namespace fmi_oop_csharp_dotnet_final_project
             set => position = new Point(value.X, value.Y);
         }
 
-        public int Size { get => SIZE; }
+        public double Size { get => DEFAULT_SIZE * sizeFactor; }
+
+        public double SizeFactor
+        {
+            get => sizeFactor;
+            set
+            {
+                if (value > 0)
+                    sizeFactor = value;
+            }
+        }
+
+        public bool IsDead
+        {
+            get => isDead;
+        }
         #endregion
 
         #region Constructors
-        public Food() : this(new Point(0, 0))
-        { }
-
-        public Food(Point pos)
+        public Food(Canvas cnv, int randomSeed, double sizeFactor = 1) : this(new Point(0, 0), randomSeed, sizeFactor)
         {
+            Position = new Point(rand.Next((int)(cnv.ActualWidth - Size + 1)), rand.Next((int)(cnv.ActualHeight - Size + 1)));
+        }
+
+        public Food(Point pos, int randomSeed, double sizeFactor = 1)
+        {
+            isDead = false;
+            rand = new Random(randomSeed);
+            SizeFactor = sizeFactor;
             Position = pos;
             ellipse = new Ellipse();
-            ellipse.Fill = new SolidColorBrush(Colors.Red);
-            ellipse.Width = SIZE;
-            ellipse.Height = SIZE;
+            byte red = (byte)rand.Next((int)(0.5 * 256), 256);
+            byte green = 0;
+            if (rand.Next(0,2) == 0)
+                green = (byte)rand.Next((int)(0.5 * 256), red + 1);
+            ellipse.Fill = new SolidColorBrush(Color.FromRgb(red, green, 0));
+            ellipse.Width = Size;
+            ellipse.Height = Size;
+            Task.Delay(TimeSpan.FromSeconds(rand.Next(DEFAULT_MIN_LIFETIME, DEFAULT_MAX_LIFETIME + 1))).ContinueWith(t => { isDead = true;  });
         }
         #endregion
 
