@@ -50,12 +50,12 @@ namespace fmi_oop_csharp_dotnet_final_project
         #endregion
 
         #region Constructors
-        public Food(Canvas cnv, int randomSeed, double sizeFactor = 1) : this(new Point(0, 0), randomSeed, sizeFactor)
+        public Food(Canvas cnv, int randomSeed, double difficultyFactor, double sizeFactor = 1) : this(new Point(0, 0), randomSeed, difficultyFactor, sizeFactor)
         {
             Position = new Point(rand.Next((int)(cnv.ActualWidth - Size + 1)), rand.Next((int)(cnv.ActualHeight - Size + 1)));
         }
 
-        public Food(Point pos, int randomSeed, double sizeFactor = 1)
+        public Food(Point pos, int randomSeed, double difficultyFactor, double sizeFactor = 1)
         {
             isDead = false;
             rand = new Random(randomSeed);
@@ -69,7 +69,7 @@ namespace fmi_oop_csharp_dotnet_final_project
             ellipse.Fill = new SolidColorBrush(Color.FromRgb(red, green, 0));
             ellipse.Width = Size;
             ellipse.Height = Size;
-            Task.Delay(TimeSpan.FromSeconds(rand.Next(DEFAULT_MIN_LIFETIME, DEFAULT_MAX_LIFETIME + 1))).ContinueWith(t => { isDead = true;  });
+            Task.Delay(TimeSpan.FromSeconds(rand.Next((int)(DEFAULT_MIN_LIFETIME * 0.5 + DEFAULT_MIN_LIFETIME * (1 - difficultyFactor)), (int)(1 + DEFAULT_MAX_LIFETIME * 0.5 + DEFAULT_MAX_LIFETIME * (1 - difficultyFactor))))).ContinueWith(t => { isDead = true;  });
         }
         #endregion
 

@@ -18,6 +18,9 @@ namespace fmi_oop_csharp_dotnet_final_project
         private const int GROWTH_RATE = 3;
         private const int DEFAULT_STARTING_FOODS = 8;
         private const int DEFAULT_STARTING_WALLS = 12;
+        private const uint DEFAULT_DIFFICULTY = 5;
+        private const uint MIN_DIFFICULTY = 0;
+        private const uint MAX_DIFFICULTY = 10;
         #endregion
 
         public event EventHandler<string> ScoreChanged;
@@ -49,6 +52,9 @@ namespace fmi_oop_csharp_dotnet_final_project
 
         // Random number generator
         private readonly Random rand;
+
+        // The game's difficulty
+        private uint difficulty;
         #endregion
 
         #region Properties
@@ -98,11 +104,18 @@ namespace fmi_oop_csharp_dotnet_final_project
                 ScoreChanged?.Invoke(this, "Score: " + score);
             }
         }
+
+        public uint Difficulty
+        {
+            get => difficulty;
+            set => difficulty = value;
+        }
         #endregion
 
         #region Constructors
         public Game(Canvas cnv, int fps = DEFAULT_FPS)
         {
+            Difficulty = DEFAULT_DIFFICULTY;
             rand = new Random();
             IsRunning = false;
             Canvas = cnv;
@@ -110,7 +123,7 @@ namespace fmi_oop_csharp_dotnet_final_project
             snake = new Snake(canvas.ActualWidth * 0.5, canvas.ActualHeight * 0.5);
             foods = new LinkedList<Food>();
             for (int i = 0; i < DEFAULT_STARTING_FOODS; i++)
-                foods.AddLast(new Food(canvas, rand.Next()));
+                foods.AddLast(new Food(canvas, rand.Next(), (double)difficulty / MAX_DIFFICULTY));
 
             walls = new LinkedList<Wall>();
             for (int i = 0; i < DEFAULT_STARTING_WALLS; i++)
@@ -169,7 +182,7 @@ namespace fmi_oop_csharp_dotnet_final_project
             for (var currNode = foods.First; currNode != null; currNode = currNode.Next)
             {
                 if (currNode.Value.IsDead)
-                    currNode.Value = new Food(canvas, rand.Next());
+                    currNode.Value = new Food(canvas, rand.Next(), (double)difficulty / MAX_DIFFICULTY);
             }
 
             snake.Move(Mouse.GetPosition(canvas), updateInterval * 0.001);
@@ -190,13 +203,13 @@ namespace fmi_oop_csharp_dotnet_final_project
             // Eaten food detection
             for (var currFoodNode = foods.First; currFoodNode != null; currFoodNode = currFoodNode.Next)
             {
-                double dist = Point.Subtract(snake.Body.First.Value, 
-                                             new Point(currFoodNode.Value.Position.X + currFoodNode.Value.Size * 0.5, 
+                double dist = Point.Subtract(snake.Body.First.Value,
+                                             new Point(currFoodNode.Value.Position.X + currFoodNode.Value.Size * 0.5,
                                                        currFoodNode.Value.Position.Y + currFoodNode.Value.Size * 0.5)
                                             ).Length;
                 if (dist < (snake.HeadSize * 0.5 + currFoodNode.Value.Size * 0.5))
                 {
-                    currFoodNode.Value = new Food(canvas, rand.Next());
+                    currFoodNode.Value = new Food(canvas, rand.Next(), (double)difficulty / MAX_DIFFICULTY);
                     ++Score;
                     snake.Grow(GROWTH_RATE);
                 }

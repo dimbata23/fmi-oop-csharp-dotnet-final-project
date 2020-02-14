@@ -42,9 +42,21 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Button Grid.Row="0" Width="900" Height="64" Content="New Game" Click="Btn_NewGameClick"/>
-                <Button Grid.Row="1" Width="900" Height="64" Content="Multiplayer [not implemented]" Foreground="#222"/>
+                <Button Grid.Row="1" Width="900" Height="64" Content="Change Difficulty" Click="Btn_ChangeDifficultyClick"/>
                 <Button Grid.Row="2" Width="900" Height="64" Content="Quit" Click="Btn_QuitClick"/>
             </Grid>
+        </Grid>
+        <Grid x:Name="Grd_DifficultyMenu" Width="900" Height="300" Margin="0 100 0 0" Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Button Grid.Row="0" Width="900" Height="64" Content="Increase Difficulty" Click="Btn_IncreaseDifficultyClick"/>
+            <Slider x:Name="Sld_Difficulty" Grid.Row="1" Width="900" Margin="0 25 0 0" Height="64" Maximum="10" Minimum="0" Value="5" SmallChange="1" TickPlacement="TopLeft"/>
+            <Button Grid.Row="2" Width="900" Height="64" Content="Decrease Difficulty" Click="Btn_DecreaseDifficultyClick"/>
+            <Button Grid.Row="3" Width="900" Height="64" Content="Back" Click="Btn_BackClick"/>
         </Grid>
         <Grid x:Name="Grd_GameScreen" Visibility="Hidden" Background="#000" Grid.RowSpan="2">
             <Grid.RowDefinitions>

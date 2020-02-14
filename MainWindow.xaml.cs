@@ -15,7 +15,7 @@ namespace fmi_oop_csharp_dotnet_final_project
         public MainWindow()
         {
             InitializeComponent();
-            game = null;
+            game = new Game(Cnv_GameCanvas);
         }
 
         private void Btn_QuitClick(object sender, RoutedEventArgs e)
@@ -28,12 +28,28 @@ namespace fmi_oop_csharp_dotnet_final_project
             Grd_MenuScreen.Visibility = Visibility.Hidden;
             Grd_GameScreen.Visibility = Visibility.Visible;
             Wnd_MainWindow.WindowState = WindowState.Maximized;
-            game = new Game(Cnv_GameCanvas);
             game.ScoreChanged += UpdateTitle;
+            game.Difficulty = (uint)Sld_Difficulty.Value;
             game.Start();
         }
 
-        // TODO: Add game difficulty menu
+        private void Btn_ChangeDifficultyClick(object sender, RoutedEventArgs e)
+        {
+            Grd_MainMenu.Visibility = Visibility.Hidden;
+            Grd_DifficultyMenu.Visibility = Visibility.Visible;
+        }
+
+        private void Btn_BackClick(object sender, RoutedEventArgs e)
+        {
+            Grd_DifficultyMenu.Visibility = Visibility.Hidden;
+            Grd_MainMenu.Visibility = Visibility.Visible;
+        }
+
+        private void Btn_IncreaseDifficultyClick(object sender, RoutedEventArgs e)
+            => --Sld_Difficulty.Value;
+
+        private void Btn_DecreaseDifficultyClick(object sender, RoutedEventArgs e)
+            => --Sld_Difficulty.Value;
 
         private void Label_MouseDown(object sender, MouseButtonEventArgs e)
         {
