@@ -57,6 +57,7 @@
     </ApplicationDefinition>
     <Compile Include="Food.cs" />
     <Compile Include="Snake.cs" />
+    <Compile Include="Wall.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
