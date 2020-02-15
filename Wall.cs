@@ -48,6 +48,7 @@ namespace fmi_oop_csharp_dotnet_final_project
         {
             rand = new Random(randomSeed);
 
+            // Create a new line at a random position
             line = new Line
             {
                 X1 = rand.Next((int)(cnv.ActualWidth * 0.1), (int)(cnv.ActualWidth * 0.85)),
@@ -56,9 +57,11 @@ namespace fmi_oop_csharp_dotnet_final_project
                 StrokeThickness = DEFAULT_SIZE
             };
 
+            // Lines the position to a SEPARATION grid
             line.X1 = RoundToCertainInt(line.X1, SEPARATION);
             line.Y1 = RoundToCertainInt(line.Y1, SEPARATION);
 
+            // Create either a vertical or a horizontal line with random length
             if (rand.Next(0, 2) == 0)
             {
                 width = DEFAULT_SIZE;
@@ -77,11 +80,13 @@ namespace fmi_oop_csharp_dotnet_final_project
             }
         }
 
+        // Add the wall to the given canvas
         public void Draw(Canvas canvas)
         {
             canvas.Children.Add(line);
         }
 
+        // Round a double to an integer interval
         private double RoundToCertainInt(double value, int roundTo)
             => Math.Round(value / roundTo) * roundTo;
         #endregion

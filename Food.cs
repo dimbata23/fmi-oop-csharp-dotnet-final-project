@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,8 +14,12 @@ namespace fmi_oop_csharp_dotnet_final_project
         private const int DEFAULT_MAX_LIFETIME = 30; // seconds
 
         #region Members
+        // The position of the food
         private Point position;
+
+        // The ecllipse which will be drawn
         private Ellipse ellipse;
+
         private double sizeFactor;
         private readonly Random rand;
         private bool isDead;
@@ -52,6 +53,7 @@ namespace fmi_oop_csharp_dotnet_final_project
         #region Constructors
         public Food(Canvas cnv, int randomSeed, double difficultyFactor, double sizeFactor = 1) : this(new Point(0, 0), randomSeed, difficultyFactor, sizeFactor)
         {
+            // Create the food at a random position
             Position = new Point(rand.Next((int)(cnv.ActualWidth - Size + 1)), rand.Next((int)(cnv.ActualHeight - Size + 1)));
         }
 
@@ -62,6 +64,8 @@ namespace fmi_oop_csharp_dotnet_final_project
             SizeFactor = sizeFactor;
             Position = pos;
             ellipse = new Ellipse();
+            
+            // Colorize the food with a random red and green colors (making them yellow-ish red)
             byte red = (byte)rand.Next((int)(0.5 * 256), 256);
             byte green = 0;
             if (rand.Next(0,2) == 0)
@@ -69,11 +73,17 @@ namespace fmi_oop_csharp_dotnet_final_project
             ellipse.Fill = new SolidColorBrush(Color.FromRgb(red, green, 0));
             ellipse.Width = Size;
             ellipse.Height = Size;
-            Task.Delay(TimeSpan.FromSeconds(rand.Next((int)(DEFAULT_MIN_LIFETIME * 0.5 + DEFAULT_MIN_LIFETIME * (1 - difficultyFactor)), (int)(1 + DEFAULT_MAX_LIFETIME * 0.5 + DEFAULT_MAX_LIFETIME * (1 - difficultyFactor))))).ContinueWith(t => { isDead = true;  });
+
+            // Mark the food as dead after a random period of time
+            Task.Delay(TimeSpan.FromSeconds(
+                rand.Next((int)(DEFAULT_MIN_LIFETIME * 0.5 + DEFAULT_MIN_LIFETIME * (1 - difficultyFactor)), 
+                          (int)(1 + DEFAULT_MAX_LIFETIME * 0.5 + DEFAULT_MAX_LIFETIME * (1 - difficultyFactor)))
+                )).ContinueWith(t => { isDead = true;  });
         }
         #endregion
 
         #region Methods
+        // Add the food to the given canvas
         public void Draw(Canvas canvas)
         {
             canvas.Children.Add(ellipse);

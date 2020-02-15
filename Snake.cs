@@ -70,6 +70,7 @@ namespace fmi_oop_csharp_dotnet_final_project
             SizeFactor = sizeFactor;
             SpeedFactor = speedFactor;
 
+            // Craete the default snake points
             for (int i = 0; i < DEFAULT_LENGTH; i++)
                 body.AddLast(new Point(x + i * Size, y));
 
@@ -81,8 +82,10 @@ namespace fmi_oop_csharp_dotnet_final_project
         #endregion
 
         #region Methods
+        // Adds the snake to the given canvas
         public void Draw(Canvas canvas)
         {
+            // Create a polyline object and add all the points
             Polyline polyline = new Polyline();
             foreach (var point in body)
                 polyline.Points.Add(point);
@@ -96,6 +99,7 @@ namespace fmi_oop_csharp_dotnet_final_project
             Canvas.SetTop(head, body.First.Value.Y - HeadSize / 2);
         }
 
+        // Move towards a given point accomodating the max steering angle
         public void Move(Point point, double deltaTime)
         {
             Vector snakeToMouseVector = Point.Subtract(point, Body.First.Value);
@@ -103,18 +107,24 @@ namespace fmi_oop_csharp_dotnet_final_project
             {
                 Vector snakeVector = Point.Subtract(Body.First.Value, Body.First.Next.Value);
                 var angle = Vector.AngleBetween(snakeVector, snakeToMouseVector);
+                // Checks the angle between the snake's direction and the direction to the mouse
                 if (angle > MAX_ROTATE_ANGLE_DEG || angle < -MAX_ROTATE_ANGLE_DEG)
                 {
+                    // If it's more than the MAX
+                    // Calculate a new vector corresponding to the direction where the snake should go instead
                     double rotateAngle = Math.Sign(angle) * MAX_ROTATE_ANGLE_RAD;
                     Vector v2 = new Vector(snakeVector.X * Math.Cos(rotateAngle) - snakeVector.Y * Math.Sin(rotateAngle),
                                            snakeVector.X * Math.Sin(rotateAngle) + snakeVector.Y * Math.Cos(rotateAngle));
                     v2.Normalize();
                     v2.X *= DEFAULT_SPEED * speedFactor;
                     v2.Y *= DEFAULT_SPEED * speedFactor;
+
+                    // Move with the calculated vector
                     MoveTowards(new Point(Body.First.Value.X + v2.X, Body.First.Value.Y + v2.Y), deltaTime);
                 }
                 else
                 {
+                    // If the angle is in the range, just move the snake towards the mouse
                     MoveTowards(point, deltaTime);
                 }
             }
@@ -122,6 +132,7 @@ namespace fmi_oop_csharp_dotnet_final_project
 
         private void MoveTowards(Point point, double deltaTime)
         {
+            // Move each point towards the next, starting from the last
             for (var curr = body.Last; curr.Previous != null; curr = curr.Previous)
             {
                 curr.Value =
@@ -131,6 +142,7 @@ namespace fmi_oop_csharp_dotnet_final_project
                     );
             }
 
+            // Move the first point of the body (the head) towards the given position
             var head = body.First;
             double distanceToPoint = Point.Subtract(point, head.Value).Length;
             head.Value =
@@ -140,12 +152,14 @@ namespace fmi_oop_csharp_dotnet_final_project
                 );
         }
 
+        // Makes the snake longer
         public void Grow(int factor = 1)
         {
             for (int i = 0; i < factor; i++)
                 body.AddLast(body.Last.Value);
         }
 
+        // Detects wheter the snake has collided with itself
         public bool DetectSelfCollision()
         {
             double dist;

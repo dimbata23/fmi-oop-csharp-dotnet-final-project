@@ -65,7 +65,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Rectangle Grid.Row="0" Fill="#222"/>
-            <Label x:Name="Lbl_Title" Grid.Row="0" Margin="3" Foreground="#fff" FontSize="18" Content="This is a sample title" MouseDown="Label_MouseDown"/>
+            <Label x:Name="Lbl_Title" Grid.Row="0" Margin="3" Foreground="#fff" FontSize="18" Content="This is a sample title"/>
             <Button Grid.Row="0" FontSize="18" Width="60" Content="✕" Click="Btn_QuitClick" HorizontalAlignment="Right"/>
             <Rectangle Grid.Row="1" Fill="#333"/>
 

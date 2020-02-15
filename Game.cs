@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace fmi_oop_csharp_dotnet_final_project
 {
@@ -23,6 +22,7 @@ namespace fmi_oop_csharp_dotnet_final_project
         private const uint MAX_DIFFICULTY = 10;
         #endregion
 
+        // The event when the score has been changed
         public event EventHandler<string> ScoreChanged;
 
         #region Members
@@ -115,22 +115,27 @@ namespace fmi_oop_csharp_dotnet_final_project
         #region Constructors
         public Game(Canvas cnv, uint difficulty = DEFAULT_DIFFICULTY, int fps = DEFAULT_FPS)
         {
-            Difficulty = difficulty;
             rand = new Random();
+            Difficulty = difficulty;
             IsRunning = false;
             Canvas = cnv;
             FPS = fps;
+
+            // Creating new game
             snake = new Snake(canvas.ActualWidth * 0.5, canvas.ActualHeight * 0.5);
+
+            // Creating the foods at random places
             foods = new LinkedList<Food>();
             for (int i = 0; i < DEFAULT_STARTING_FOODS + DEFAULT_DIFFICULTY - difficulty; i++)
                 foods.AddLast(new Food(canvas, rand.Next(), (double)difficulty / MAX_DIFFICULTY));
 
+            // Creating the walls at random places
             walls = new LinkedList<Wall>();
             for (int i = 0; i < DEFAULT_STARTING_WALLS + (difficulty - DEFAULT_DIFFICULTY) * 3; i++)
             {
                 walls.AddLast(new Wall(canvas, rand.Next()));
 
-                // Add walls but not in the middle
+                // If the wall has been placed in the middle of the screen, replace it
                 while (RectanglesCollide(walls.Last.Value.X, walls.Last.Value.Y, walls.Last.Value.Width, walls.Last.Value.Height,
                                          canvas.ActualWidth * 0.3, canvas.ActualHeight * 0.3, canvas.ActualWidth * 0.4, canvas.ActualHeight * 0.4))
                 {
@@ -146,6 +151,7 @@ namespace fmi_oop_csharp_dotnet_final_project
             if (!IsRunning)
             {
                 IsRunning = true;
+                // Create a new thread for the game loop
                 gameLoopThread = new Thread(GameLoop);
                 gameLoopThread.Start();
                 Score = 0;
@@ -163,13 +169,17 @@ namespace fmi_oop_csharp_dotnet_final_project
             Stopwatch timer = new Stopwatch();
             timer.Start();
             double deltaTime = 0;
+
             while (IsRunning)
             {
+                // Calculate the delta time and wait the 
+                // calculated amount to achieve the desired FPS
                 deltaTime = timer.Elapsed.TotalMilliseconds;
                 if (deltaTime < updateInterval)
                     Thread.Sleep((int)(updateInterval - deltaTime));
                 timer.Restart();
 
+                // Run the update and draw methods
                 Application.Current.Dispatcher.Invoke(Update);
                 if (IsRunning)
                     Application.Current.Dispatcher.Invoke(Draw);
@@ -178,19 +188,21 @@ namespace fmi_oop_csharp_dotnet_final_project
 
         private void Update()
         {
-            // Remove dead food
+            // If food has been marked as dead -> create a new food at a random place
             for (var currNode = foods.First; currNode != null; currNode = currNode.Next)
             {
                 if (currNode.Value.IsDead)
                     currNode.Value = new Food(canvas, rand.Next(), (double)difficulty / MAX_DIFFICULTY);
             }
 
+            // Call snake's move method
             snake.Move(Mouse.GetPosition(canvas), updateInterval * 0.001);
 
+            // If the snake has eaten its tail end the game
             if (snake.DetectSelfCollision())
                 GameOver();
 
-            // Collision with walls
+            // Check for collision with walls
             foreach (Wall wall in walls)
             {
                 if (CircleAndRectangleCollide(snake.Body.First.Value.X + snake.HeadSize * 0.5, snake.Body.First.Value.Y + snake.HeadSize * 0.5, snake.HeadSize * 0.5,
@@ -200,7 +212,7 @@ namespace fmi_oop_csharp_dotnet_final_project
                 }
             }
 
-            // Eaten food detection
+            // Check for collision with food
             for (var currFoodNode = foods.First; currFoodNode != null; currFoodNode = currFoodNode.Next)
             {
                 double dist = Point.Subtract(snake.Body.First.Value,
@@ -209,8 +221,11 @@ namespace fmi_oop_csharp_dotnet_final_project
                                             ).Length;
                 if (dist < (snake.HeadSize * 0.5 + currFoodNode.Value.Size * 0.5))
                 {
+                    // If the snake's eaten the food, create a new one
                     currFoodNode.Value = new Food(canvas, rand.Next(), (double)difficulty / MAX_DIFFICULTY);
+                    // Add score
                     ++Score;
+                    // And make the snake larger
                     snake.Grow(GROWTH_RATE);
                 }
             }
@@ -218,19 +233,24 @@ namespace fmi_oop_csharp_dotnet_final_project
 
         private void Draw()
         {
+            // Clear the canvas
             canvas.Children.Clear();
 
+            // Add all the food to the canvas
             foreach (Food food in foods)
                 food.Draw(canvas);
 
+            // Add all the walls to the canvas
             foreach (Wall wall in walls)
                 wall.Draw(canvas);
 
+            // Add the snake to the canvas
             snake.Draw(canvas);
         }
 
         private void GameOver()
         {
+            // Create and add a textbox to the canvas with the text "Game Over!"
             TextBlock Txt_gameOver = new TextBlock();
             Txt_gameOver.Width = canvas.ActualWidth;
             Txt_gameOver.Text = "Game Over!";
@@ -239,9 +259,11 @@ namespace fmi_oop_csharp_dotnet_final_project
             Txt_gameOver.Background = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
             Canvas.SetTop(Txt_gameOver, canvas.ActualHeight * 0.45);
             canvas.Children.Add(Txt_gameOver);
+            // Stop the game
             Stop();
         }
 
+        // Checks whether two rectangles collide
         private bool RectanglesCollide(double x1, double y1, double width1, double height1, double x2, double y2, double width2, double height2)
         {
             return x1 < x2 + width2 &&
@@ -250,6 +272,7 @@ namespace fmi_oop_csharp_dotnet_final_project
                    y1 + height1 > y2;
         }
 
+        // Checks whether the circle and the rectangle collide
         private bool CircleAndRectangleCollide(double circleX, double circleY, double circleRadius, double rectX, double rectY, double rectW, double rectH)
         {
             double distX = Math.Abs(circleX - rectX - rectW * 0.5);
